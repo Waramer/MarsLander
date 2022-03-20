@@ -11,12 +11,21 @@ class Lander :
         self.power = 0
         self.fuel = 2000
         self.awake = True
+        self.landed = False
+        self.score = -1
     
     def pause(self):
         self.awake = False
-    
     def resume(self):
         self.awake = True
+    
+    def landing(self):
+        self.landed = True
+    def crashing(self):
+        self.landed = False
+    
+    def scoring(self,new_score):
+        self.score = new_score
 
     def turn(self,orient):
         command = orient * m.pi / 180
