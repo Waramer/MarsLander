@@ -1,4 +1,6 @@
 import numpy as np
+import math as m
+import random
 
 class Individual :
     def __init__(self,orient,power,nbActions):
