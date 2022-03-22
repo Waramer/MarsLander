@@ -37,14 +37,14 @@ class Game :
         if lander.pose[0]>=self.map.points[0][self.map.lz[0]] and lander.pose[0]<=self.map.points[0][self.map.lz[1]] :
             if abs(lander.spd[0])<=20 and abs(lander.spd[1])<=40 :
                 if abs(lander.pose[2])<0.01 :
-                    lander.landed = True
+                    lander.landed = "LANDED"
                     return True
-        lander.landed = False
+        lander.landed = "CRASHED"
         return False
 
-    def computeScore(self,lander,segment):
-        if lander.landed :
-            lander.scoring(0)
+    def computeDist(self,lander,segment):
+        if lander.landed == "LANDED":
+            lander.distance(0)
         else :
             dist = 0
             if segment[1]<=self.map.lz[0]:
@@ -59,7 +59,7 @@ class Game :
                 for i in range(self.map.lz[1],segment[0]):
                     dist += m.dist([self.map.points[0][i],self.map.points[1][i]],[self.map.points[0][i+1],self.map.points[1][i+1]])
 
-            lander.scoring(dist)
+            lander.distance(dist)
 
     def step(self, dt):
         if self.goOn :
@@ -69,5 +69,5 @@ class Game :
                     coll = self.collisionCheck(lander)
                     if coll[0] :
                         self.landingCheck(lander)
-                        self.computeScore(lander,coll[1])
+                        self.computeDist(lander,coll[1])
                         lander.pause()

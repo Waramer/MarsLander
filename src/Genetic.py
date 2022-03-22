@@ -12,8 +12,11 @@ class Genetic:
     def __init__(self,nbPop,initOrient,initPower,nbActions):
         self.population = [ Individual(initOrient,initPower,nbActions) for i in range(nbPop)]
 
-    def evaluation(self,i,score):
-        self.population[i].fitness = score
+    def evaluation(self,ind,lander):
+        if lander.landed == "LANDED":
+            self.population[ind].fitness = lander.spd[0] + abs(lander.spd[0]) + abs(lander.spd[1])
+        else :
+            self.population[ind].fitness = lander.dist + abs(lander.spd[0]) + abs(lander.spd[1]) + abs(lander.pose[2])
 
     def stopCriteria(self):
         pass

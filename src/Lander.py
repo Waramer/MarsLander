@@ -11,8 +11,8 @@ class Lander :
         self.power = 0
         self.fuel = 2000
         self.awake = True
-        self.landed = False
-        self.score = -1
+        self.landed = "AIRBORNE"
+        self.dist = -1
     
     def pause(self):
         self.awake = False
@@ -20,12 +20,12 @@ class Lander :
         self.awake = True
     
     def landing(self):
-        self.landed = True
+        self.landed = "LANDED"
     def crashing(self):
-        self.landed = False
+        self.landed = "CRASHED"
     
-    def scoring(self,new_score):
-        self.score = new_score
+    def distance(self,new_dist):
+        self.dist = new_dist
 
     def turn(self,orient):
         command = orient * m.pi / 180
