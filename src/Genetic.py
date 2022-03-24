@@ -75,7 +75,7 @@ class Genetic:
 
         return child1, child2
     
-    def mutation(self):
+    def mutation(self,chrom):
         
         chrom = np.array(chrom)
         mut_rate=0.2
