@@ -61,10 +61,10 @@ class Genetic:
                 i1 = self.rand.randint(0,self.nbPop-2)
                 i2 = self.rand.randint(i1+1,self.nbPop-1)
                 for t in range(i1,i2+1):
-                    temp = self.enfants[2*ind].actions[t]
-                    self.enfants[2*ind].actions[t] = self.enfants[2*ind+1].actions[t]
-                    self.enfants[2*ind+1].actions[t] = temp
-                print(i,",",doOrNot,":",i1,i2)
+                    temp = copy.copy(self.enfants[2*ind].actions[t])
+                    self.enfants[2*ind].actions[t] = copy.copy(self.enfants[2*ind+1].actions[t])
+                    self.enfants[2*ind+1].actions[t] = copy.copy(temp)
+                print(2*i,"-",2*i+1,",",doOrNot,":",i1,i2)
             i+=1
         self.printEnf()
 
@@ -137,9 +137,9 @@ class Genetic:
     def printPop(self):
         print("POPULATION : ")
         for ind in self.population:
-            print(ind.actions,"=",ind.fitness," -> ",ind)
+            print(ind.actions,"=",ind.fitness)
 
     def printEnf(self):
         print("ENFANTS : ")
         for ind in self.enfants:
-            print(ind.actions,"=",ind.fitness," -> ",ind)
+            print(ind.actions,"=",ind.fitness)

@@ -75,7 +75,7 @@ if __name__ == '__main__':
     echantillonnage = 10                     # Nb de tic du moteur de jeu par secondes de simulation
     initX = 3500                             # position initiale X
     initY = 2800                             # position initiale Y
-    tauxCross = 0.2                          # Taux de croisement
+    tauxCross = 0.3                          # Taux de croisement
     tauxMut = 0.3                         # Taux de mutation
 
     # PROGRAMME INITIALISATION
@@ -100,11 +100,11 @@ if __name__ == '__main__':
         genetic.selection()
         print("SELECTION",generations,"TERMINEE")
         # CROISEMENT
-        # genetic.crossover()
-        # print("CROISEMENT",generations,"TERMINEE")
+        genetic.crossover()
+        print("CROISEMENT",generations,"TERMINEE")
         # MUTATION
-        genetic.mutation()
-        print("MUTATION",generations,"TERMINEE")
+        # genetic.mutation()
+        # print("MUTATION",generations,"TERMINEE")
         # EVALUATION ENFANTS
         gameRun(ENFANTS)
         genetic.printEnf
