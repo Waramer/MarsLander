@@ -70,13 +70,13 @@ if __name__ == '__main__':
     # VARIABLES PROGRAMME A CHOISIR
     nombrePopulation = 10                    # nombre d'individu dans une génération
     map = map1                               # choisir la map
-    nbActions = 200                          # nombre d'actions prises par un individu
+    nbActions = 10                          # nombre d'actions prises par un individu
     tempsSimualtion = 2000                   # temps maximum de la simulation (s)
     echantillonnage = 10                     # Nb de tic du moteur de jeu par secondes de simulation
     initX = 3500                             # position initiale X
     initY = 2800                             # position initiale Y
-    tauxCross = 0.1                          # Taux de croisement
-    tauxMut = 0.8                            # Taux de mutation
+    tauxCross = 0.2                          # Taux de croisement
+    tauxMut = 0.3                         # Taux de mutation
 
     # PROGRAMME INITIALISATION
     if initX>map.points[0][map.lz[1]] : initOrient = -1
@@ -90,21 +90,24 @@ if __name__ == '__main__':
     plt.pause(1.0)
     # Condition entrée en cycle
     goOn = genetic.stopCriteria()
-    generations = 0
+    generations = 1
     print("INITIALISATION TERMINEE")
+    genetic.printPop()
     while(goOn==True):
+
         print("GENERATION",generations)
         # SELECTION
         genetic.selection()
         print("SELECTION",generations,"TERMINEE")
         # CROISEMENT
-        genetic.crossover()
-        print("CROISEMENT",generations,"TERMINEE")
+        # genetic.crossover()
+        # print("CROISEMENT",generations,"TERMINEE")
         # MUTATION
         genetic.mutation()
         print("MUTATION",generations,"TERMINEE")
         # EVALUATION ENFANTS
         gameRun(ENFANTS)
+        genetic.printEnf
         print("EVALUATION",generations,"TERMINEE")
         plt.pause(1.0)
         # REMPLACEMENT
