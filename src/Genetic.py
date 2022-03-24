@@ -56,6 +56,7 @@ class Genetic:
     
     def mutation(self):
         
+        chrom = np.array(chrom)
         mut_rate=0.2
         rows, columns = chrom.shape
         num_mut = m.ceil(mut_rate*rows*columns)  ##calcul du nombre de mutation selon la taux de mutation et la cantité d'individus dispo
@@ -67,11 +68,23 @@ class Genetic:
           a=random.randint(0,rows-1)
           b=random.randint(0,columns-1)
           if b==0:    ##si l'info a changer c'est un angle
-            chrom[a,b]=random.uniform(-m.pi/2,m.pi/2)
-          else:       ##si l'info a changer c'est une puissance
-            chrom[a,b]=random.uniform(0,4)
+            d = random.randint(-1,1)
 
-        return chrom
+            while( (chrom[a,b] + (m.pi/12)*d <-m.pi/2) | (chrom[a,b] + (m.pi/12)*d > m.pi/2) ):
+              d = random.randint(-1,1)
+
+            chrom[a,b]= chrom[a,b] + (m.pi/12) * d
+
+
+          else:       ##si l'info a changer c'est une puissance
+            e = random.randint(-1,1)
+
+            while( (chrom[a,b] + e < 0) | (chrom[a,b] + e > 4) ):
+              e = random.randint(-1,1)
+
+            chrom[a,b] = chrom[a,b] + e
+
+          return chrom
 
     def replacement(self):
         pass
