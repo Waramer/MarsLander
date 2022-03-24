@@ -48,13 +48,11 @@ class Game :
         else :
             dist = 0
             if segment[1]<=self.map.lz[0]:
-                print("droite")
                 dist = m.dist([lander.pose[0],lander.pose[1]],[self.map.points[0][segment[1]],self.map.points[1][segment[1]]])
                 for i in range(segment[1],self.map.lz[0]):
                     dist += m.dist([self.map.points[0][i],self.map.points[1][i]],[self.map.points[0][i+1],self.map.points[1][i+1]])
 
             elif self.map.lz[1]<=segment[0]:
-                print("gauche")
                 dist = m.dist([lander.pose[0],lander.pose[1]],[self.map.points[0][segment[0]],self.map.points[1][segment[0]]])
                 for i in range(self.map.lz[1],segment[0]):
                     dist += m.dist([self.map.points[0][i],self.map.points[1][i]],[self.map.points[0][i+1],self.map.points[1][i+1]])
@@ -70,4 +68,7 @@ class Game :
                     if coll[0] :
                         self.landingCheck(lander)
                         self.computeDist(lander,coll[1])
+                        lander.pause()
+                    if lander.pose[0]<0 or lander.pose[0]>7000:
+                        lander.landed="OUT"
                         lander.pause()

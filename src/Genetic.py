@@ -2,6 +2,9 @@ import numpy as np
 import math as m
 import random
 
+ANCETRES = 0
+ENFANTS = 1
+
 class Individual :
     def __init__(self,orient,power,nbActions):
         self.actions = [[orient,power] for i in range(nbActions)]
@@ -9,21 +12,40 @@ class Individual :
 
 class Genetic:
 
-    def __init__(self,nbPop,initOrient,initPower,nbActions):
-        self.population = [ Individual(initOrient,initPower,nbActions) for i in range(nbPop)]
+    def __init__(self,nbPop,initOrient,nbActions,cross,mut):
+        self.nbPop = nbPop
+        self.population = [ Individual(initOrient*15*(random.randint(1,6)),random.randint(1,4),nbActions) for i in range(nbPop)]
+        self.enfants = []
+        self.tauxCross = cross
+        self.tauwMut = mut
 
-    def evaluation(self,ind,lander):
-        if lander.landed == "LANDED":
-            self.population[ind].fitness = lander.spd[0] + abs(lander.spd[0]) + abs(lander.spd[1])
-        else :
-            self.population[ind].fitness = lander.dist + abs(lander.spd[0]) + abs(lander.spd[1]) + abs(lander.pose[2])
+    def evaluation(self,popID,ind,lander):
+        if popID==ANCETRES:
+            if lander.landed == "LANDED":
+                self.population[ind].fitness = 0
+            else :
+                self.population[ind].fitness = lander.dist + 10*abs(lander.spd[0]) + 10*abs(lander.spd[1]) + 10*abs(lander.pose[2])
+        elif popID==ENFANTS:
+            if lander.landed == "LANDED":
+                self.enfants[ind].fitness = 0
+            else :
+                self.enfants[ind].fitness = lander.dist + 10*abs(lander.spd[0]) + 10*abs(lander.spd[1]) + 10*abs(lander.pose[2])
 
     def stopCriteria(self):
-        pass
+        for ind in self.population:
+            if ind.fitness == 0 :
+                return ind.actions
+        return True
     
     def selection(self):
-        
-        pass
+        for i in range(self.nbPop):
+            # Tournoi 1v1 à sélection aléatoire
+            a1 = random.randint(0,self.nbPop-1)
+            a2 = random.randint(0,self.nbPop-1)
+            if self.population[a1].fitness >= self.population[a2].fitness:
+                self.enfants.append(self.population[a1])
+            else :
+                self.enfants.append(self.population[a2])
 
     def crossover(self, parent1, parent2):
         parent1 = np.array(parent1)
@@ -52,7 +74,6 @@ class Genetic:
         child2=np.array(child2).reshape(rows,columns)
 
         return child1, child2
-
     
     def mutation(self):
         
@@ -87,4 +108,43 @@ class Genetic:
           return chrom
 
     def replacement(self):
-        pass
+        newPop = []
+        # Sélectionner les deux meilleurs des ancetres
+        if self.population[0].fitness >= self.population[1].fitness:
+            newPop.append(self.population[0])
+            newPop.append(self.population[1])
+        else :
+            newPop.append(self.population[1])
+            newPop.append(self.population[0])
+        for anc in self.population:
+            if anc.fitness > newPop[0].fitness and anc.fitness > newPop[1].fitness:
+                newPop[1] = newPop[0]
+                newPop[0] = anc
+            elif anc.fitness > newPop[1].fitness:
+                newPop[1] = anc
+        # Prendre trois autres ancetres au hasard
+        while len(newPop)<self.nbPop/2:
+            rand = random.randint(0,self.nbPop-1)
+            if self.population[rand] not in newPop:
+                newPop.append(self.population[rand])
+        # Sélectionner les deux meilleurs des enfants
+        if self.enfants[0].fitness >= self.enfants[1].fitness:
+            newPop.append(self.enfants[0])
+            newPop.append(self.enfants[1])
+        else :
+            newPop.append(self.enfants[1])
+            newPop.append(self.enfants[0])
+        for anc in self.enfants:
+            if anc.fitness > newPop[0].fitness and anc.fitness > newPop[1].fitness:
+                newPop[1] = newPop[0]
+                newPop[0] = anc
+            elif anc.fitness > newPop[1].fitness:
+                newPop[1] = anc
+        # Prendre trois autres enfants au hasard
+        while len(newPop)<self.nbPop:
+            rand = random.randint(0,self.nbPop-1)
+            if self.enfants[rand] not in newPop:
+                newPop.append(self.enfants[rand])
+        # Remplacement
+        self.population = newPop
+        self.enfants = []

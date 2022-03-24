@@ -18,7 +18,7 @@ class Lander :
         self.awake = False
     def resume(self):
         self.awake = True
-    
+
     def landing(self):
         self.landed = "LANDED"
     def crashing(self):
