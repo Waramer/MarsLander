@@ -25,15 +25,19 @@ class Genetic:
 
     def evaluation(self,popID,ind,lander):
         if popID==ANCETRES:
-            if lander.landed == "LANDED":
+            if lander.landed == "LANDED" :
                 self.population[ind].fitness = 0
-            else :
+            elif lander.landed == "CRASHED" :
                 self.population[ind].fitness = lander.dist + 10*abs(lander.spd[0]) + 10*abs(lander.spd[1]) + 10*abs(lander.pose[2])
-        elif popID==ENFANTS:
-            if lander.landed == "LANDED":
-                self.enfants[ind].fitness = 0
             else :
+                self.population[ind].fitness = 100000
+        elif popID==ENFANTS:
+            if lander.landed == "LANDED" :
+                self.enfants[ind].fitness = 0
+            elif lander.landed == "CRASHED" :
                 self.enfants[ind].fitness = lander.dist + 10*abs(lander.spd[0]) + 10*abs(lander.spd[1]) + 10*abs(lander.pose[2])
+            else :
+                self.enfants[ind].fitness = 100000
 
     def stopCriteria(self):
         for ind in self.population:
@@ -51,7 +55,7 @@ class Genetic:
                 self.enfants[i].actions = copy.deepcopy(self.population[a1].actions)
             else :
                 self.enfants[i].actions = copy.deepcopy(self.population[a2].actions)
-        self.printEnf()
+        #self.printEnf()
 
     def crossover(self):
         i = 0
@@ -64,9 +68,9 @@ class Genetic:
                     temp = copy.copy(self.enfants[2*ind].actions[t])
                     self.enfants[2*ind].actions[t] = copy.copy(self.enfants[2*ind+1].actions[t])
                     self.enfants[2*ind+1].actions[t] = copy.copy(temp)
-                print(2*i,"-",2*i+1,",",doOrNot,":",i1,i2)
+                #print(2*i,"-",2*i+1,",",doOrNot,":",i1,i2)
             i+=1
-        self.printEnf()
+        #self.printEnf()
 
     def mutation(self):
         i = 0
@@ -84,56 +88,41 @@ class Genetic:
                     self.enfants[ind].actions[t][1] += power
                     if self.enfants[ind].actions[t][1] > 4 : self.enfants[ind].actions[t][1] = 4
                     elif self.enfants[ind].actions[t][1] < 0 : self.enfants[ind].actions[t][1] = 0
-                print(i,",",doOrNot,":",i1,i2,power,orient)
+                #print(i,",",doOrNot,":",i1,i2,power,orient)
             i+=1
-        self.printEnf()
+        #self.printEnf()
 
     def replacement(self):
         newPop = [Individual(0,0,self.nbActions) for i in range(self.nbPop)]
+        # Sélectionner le meilleur ancêtre
+        bestOfPop = 0
+        for i in range(self.nbPop):
+            if self.population[i].fitness < self.population[bestOfPop].fitness:
+                bestOfPop = i
+        newPop[0].actions = copy.deepcopy(self.population[bestOfPop].actions)
+        newPop[0].fitness = copy.copy(self.population[bestOfPop].fitness)
+        # Sélectionner le meilleur ancêtre
+        bestOfEnf = 0
+        for i in range(self.nbPop):
+            if self.enfants[i].fitness < self.enfants[bestOfEnf].fitness:
+                bestOfEnf = i
+        newPop[1].actions = copy.deepcopy(self.enfants[bestOfEnf].actions)
+        newPop[1].fitness = copy.copy(self.enfants[bestOfEnf].fitness)
+        # Compléter avec des individus aléatoires des deux précédents groupes
+        for i in range(2,self.nbPop):
+            quellePop = self.rand.random()
+            if quellePop<0.5:
+                quelIndiv = self.rand.randint(0,self.nbPop-1)
+                newPop[i].actions = copy.deepcopy(self.population[quelIndiv].actions)
+                newPop[i].fitness = copy.copy(self.population[quelIndiv].fitness)
+            else:
+                quelIndiv = self.rand.randint(0,self.nbPop-1)
+                newPop[i].actions = copy.deepcopy(self.enfants[quelIndiv].actions)
+                newPop[i].fitness = copy.copy(self.enfants[quelIndiv].fitness)
         # Remplacement
         self.population = newPop
-        self.printPop()
+        #self.printPop()
         
-        # # Sélectionner les deux meilleurs des ancetres
-        # if self.population[0].fitness <= self.population[1].fitness:
-        #     newPop.append(Individual(self.population[0].actions))
-        #     newPop.append(Individual(self.population[1].actions))
-        # else :
-        #     newPop.append(Individual(self.population[1].actions))
-        #     newPop.append(Individual(self.population[0].actions))
-        # for anc in self.population:
-        #     if anc.fitness < newPop[0].fitness and anc.fitness < newPop[1].fitness:
-        #         newPop[1] = Individual(newPop[0].actions)
-        #         newPop[0] = Individual(anc.actions)
-        #     elif anc.fitness < newPop[1].fitness:
-        #         newPop[1] = Individual(anc.actions)
-        # # Prendre trois autres ancetres au hasard
-        # a,b,c = self.rand.randint(0,self.nbPop-1),self.rand.randint(0,self.nbPop-1),self.rand.randint(0,self.nbPop-1)
-        # newPop.append(Individual(self.population[a].actions))
-        # newPop.append(Individual(self.population[b].actions))
-        # newPop.append(Individual(self.population[c].actions))
-        # # Sélectionner les deux meilleurs des enfants
-        # if self.enfants[0].fitness <= self.enfants[1].fitness :
-        #     newPop.append(Individual(self.enfants[0].actions))
-        #     newPop.append(Individual(self.enfants[1].actions))
-        # else :
-        #     newPop.append(Individual(self.enfants[1].actions))
-        #     newPop.append(Individual(self.enfants[0].actions))
-        # for anc in self.enfants:
-        #     if anc.fitness < newPop[0].fitness and anc.fitness < newPop[1].fitness :
-        #         newPop[1] = Individual(newPop[0].actions)
-        #         newPop[0] = Individual(anc.actions)
-        #     elif anc.fitness < newPop[1].fitness :
-        #         newPop[1] = Individual(anc.actions)
-        # # Prendre trois autres enfants au hasard
-        # a,b,c = self.rand.randint(0,self.nbPop-1),self.rand.randint(0,self.nbPop-1),self.rand.randint(0,self.nbPop-1)
-        # newPop.append(Individual(self.enfants[a].actions))
-        # newPop.append(Individual(self.enfants[b].actions))
-        # newPop.append(Individual(self.enfants[c].actions))
-        # # Remplacement
-        # self.population = newPop
-        # self.printPop()
-    
     def printPop(self):
         print("POPULATION : ")
         for ind in self.population:
