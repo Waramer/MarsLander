@@ -4,13 +4,14 @@ from Game import Map
 from Genetic import Genetic
 from Lander import Lander
 import numpy as np
-import time
 
 # CONSTANTES
 DEBUG = False
 ANCETRES = 0
 ENFANTS = 1
 map1 = Map([[0,1000,2000,3000,4000,5000,6000,7000],[1500,500,1000,1200,200,200,500,1300]],[4,5])
+map2 = Map([[0,1000,2000,3000,4000,5000,6000,7000],[1500,750,1200,1800,1000,1000,1200,2000]],[4,5])
+map3 = Map([[0,1000,2000,3000,4000,4000,3000,3000,4000,5000,6000,7000],[2000,1500,800,500,500,800,1200,1500,1800,1500,1000,1500]],[3,4])
 
 # ========== FUNCTIONS ==========
 
@@ -21,17 +22,20 @@ def gameRun(popID):
     game = Game(map,landers)
 
     # # INITIALISATION AFFICHAGE
-    ax = plt.axes()
-    plt.xlim(0,7000) 
-    plt.ylim(0,3000)
-    ax.plot(game.map.points[0],game.map.points[1],color='r')
-    ax.plot([game.map.points[0][game.map.lz[0]],game.map.points[0][game.map.lz[1]]],[game.map.points[1][game.map.lz[0]],game.map.points[1][game.map.lz[1]]],color='r',linewidth=3)
-    ax.set_facecolor((0.05,0.05,0.05))
 
     # START GAME
     game.start()
     timer = 0
     compteurAction = 0
+
+    # INITIALISATION AFFICHAGE
+    ax = plt.axes()
+    plt.xlim(0,7000) 
+    plt.ylim(0,3000)
+    ax.set_facecolor((0.05,0.05,0.05))
+    ax.plot(game.map.points[0],game.map.points[1],color='r')
+    ax.plot([game.map.points[0][game.map.lz[0]],game.map.points[0][game.map.lz[1]]],[game.map.points[1][game.map.lz[0]],game.map.points[1][game.map.lz[1]]],color='r',linewidth=3)
+
     # GAME LOOP
     for i in range(tempsSimualtion):
         game.step(1/echantillonnage)
@@ -67,18 +71,19 @@ def gameRunOptimal(actions):
     landersTrajectories = [[[initX],[initY]]]
     game = Game(map,landers)
 
-    # INITIALISATION AFFICHAGE
-    ax = plt.axes()
-    plt.xlim(0,7000) 
-    plt.ylim(0,3000)
-    ax.plot(game.map.points[0],game.map.points[1],color='r')
-    ax.plot([game.map.points[0][game.map.lz[0]],game.map.points[0][game.map.lz[1]]],[game.map.points[1][game.map.lz[0]],game.map.points[1][game.map.lz[1]]],color='r',linewidth=3)
-    ax.set_facecolor((0.05,0.05,0.05))
-
     # START GAME
     game.start()
     timer = 0
     compteurAction = 0
+
+    # INITIALISATION AFFICHAGE
+    ax = plt.axes()
+    plt.xlim(0,7000) 
+    plt.ylim(0,3000)
+    ax.set_facecolor((0.05,0.05,0.05))
+    ax.plot(game.map.points[0],game.map.points[1],color='r')
+    ax.plot([game.map.points[0][game.map.lz[0]],game.map.points[0][game.map.lz[1]]],[game.map.points[1][game.map.lz[0]],game.map.points[1][game.map.lz[1]]],color='r',linewidth=3)
+
     # GAME LOOP
     for i in range(tempsSimualtion):
         game.step(1/echantillonnage)
@@ -107,12 +112,12 @@ if __name__ == '__main__':
     nombrePopulation = 20                    # nombre d'individu dans une génération
     map = map1                               # choisir la map
     nbActions = 20                          # nombre d'actions prises par un individu
-    tempsSimualtion = 2000                   # temps maximum de la simulation (s)
+    tempsSimualtion = 2000                   # Nombre de tics pour la simulation
     echantillonnage = 10                     # Nb de tic du moteur de jeu par secondes de simulation
-    initX = 1000                             # position initiale X
-    initY = 2500                             # position initiale Y
-    tauxCross = 0.3                          # Taux de croisement
-    tauxMut = 0.7                         # Taux de mutation
+    initX = 1500                         # position initiale X
+    initY = 1800                            # position initiale Y
+    tauxCross = 0.2                          # Taux de croisement
+    tauxMut = 0.8                       # Taux de mutation
 
     # PROGRAMME INITIALISATION
     if initX>map.points[0][map.lz[1]] : initOrient = -1
@@ -121,40 +126,24 @@ if __name__ == '__main__':
 
     # ============ GENETIC RUNS ============
 
-    # Evaluation post initialisation
     gameRun(ANCETRES)
-    plt.pause(1.0)
-    # Condition entrée en cycle
+    plt.pause(0.01)
     goOn = genetic.stopCriteria()
     generations = 1
-    #print("INITIALISATION TERMINEE")
-    #genetic.printPop()
     while(goOn==True):
 
         print("GENERATION",generations)
-        # SELECTION
         genetic.selection()
-        #print("SELECTION",generations,"TERMINEE")
-        # CROISEMENT
         genetic.crossover()
-        #print("CROISEMENT",generations,"TERMINEE")
-        # MUTATION
         genetic.mutation()
-        #print("MUTATION",generations,"TERMINEE")
-        # EVALUATION ENFANTS
+        plt.clf()
         gameRun(ENFANTS)
-        plt.pause(1e-17)
-        #genetic.printEnf()
-        #print("EVALUATION",generations,"TERMINEE")
-        # REMPLACEMENT
+        plt.pause(0.01)
         genetic.replacement()
-        #print("REMPLACEMENT",generations,"TERMINEE")
-        # CRITERE ARRET
         goOn = genetic.stopCriteria()
         generations += 1
     
     # SHOW OPTIMAL
-    #print("OPTIMAL FOUND !")
     gameRunOptimal(goOn)
     plt.show()
 

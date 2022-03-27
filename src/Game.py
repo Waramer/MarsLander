@@ -35,10 +35,11 @@ class Game :
 
     def landingCheck(self,lander):
         if lander.pose[0]>=self.map.points[0][self.map.lz[0]] and lander.pose[0]<=self.map.points[0][self.map.lz[1]] :
-            if abs(lander.spd[0])<=20 and abs(lander.spd[1])<=40 :
-                if abs(lander.pose[2])<0.01 :
-                    lander.landed = "LANDED"
-                    return True
+            if lander.pose[1]<=self.map.points[1][self.map.lz[0]] or lander.pose[1]>=self.map.points[1][self.map.lz[1]]:
+                if abs(lander.spd[0])<=20 and abs(lander.spd[1])<=40 :
+                    if abs(lander.pose[2])<0.01 :
+                        lander.landed = "LANDED"
+                        return True
         lander.landed = "CRASHED"
         return False
 

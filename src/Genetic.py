@@ -55,7 +55,7 @@ class Genetic:
                 self.enfants[i].actions = copy.deepcopy(self.population[a1].actions)
             else :
                 self.enfants[i].actions = copy.deepcopy(self.population[a2].actions)
-        #self.printEnf()
+        self.printEnf()
 
     def crossover(self):
         i = 0
@@ -68,9 +68,9 @@ class Genetic:
                     temp = copy.copy(self.enfants[2*ind].actions[t])
                     self.enfants[2*ind].actions[t] = copy.copy(self.enfants[2*ind+1].actions[t])
                     self.enfants[2*ind+1].actions[t] = copy.copy(temp)
-                #print(2*i,"-",2*i+1,",",doOrNot,":",i1,i2)
+                print(2*i,"-",2*i+1,",",doOrNot,":",i1,i2)
             i+=1
-        #self.printEnf()
+        self.printEnf()
 
     def mutation(self):
         i = 0
@@ -88,9 +88,23 @@ class Genetic:
                     self.enfants[ind].actions[t][1] += power
                     if self.enfants[ind].actions[t][1] > 4 : self.enfants[ind].actions[t][1] = 4
                     elif self.enfants[ind].actions[t][1] < 0 : self.enfants[ind].actions[t][1] = 0
-                #print(i,",",doOrNot,":",i1,i2,power,orient)
+                print(i,",",doOrNot,":",i1,i2,power,orient)
             i+=1
-        #self.printEnf()
+        self.correctPop()
+        self.printEnf()
+    
+    def correctPop(self):
+        for enf in self.enfants:
+            for i in range(1,self.nbActions):
+                if enf.actions[i][0] > enf.actions[i-1][0] + 15:
+                    enf.actions[i][0] = enf.actions[i-1][0] + 15
+                elif enf.actions[i][0] < enf.actions[i-1][0] - 15:
+                    enf.actions[i][0] = enf.actions[i-1][0] - 15
+                if enf.actions[i][1] > enf.actions[i-1][1] + 1:
+                    enf.actions[i][1] = enf.actions[i-1][1] + 1
+                elif enf.actions[i][1] < enf.actions[i-1][1] - 1:
+                    enf.actions[i][1] = enf.actions[i-1][1] - 1
+
 
     def replacement(self):
         newPop = [Individual(0,0,self.nbActions) for i in range(self.nbPop)]
@@ -121,7 +135,7 @@ class Genetic:
                 newPop[i].fitness = copy.copy(self.enfants[quelIndiv].fitness)
         # Remplacement
         self.population = newPop
-        #self.printPop()
+        self.printPop()
         
     def printPop(self):
         print("POPULATION : ")
