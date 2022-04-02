@@ -110,14 +110,14 @@ if __name__ == '__main__':
 
     # VARIABLES PROGRAMME A CHOISIR
     nombrePopulation = 20                    # nombre d'individu dans une génération
-    map = map1                               # choisir la map
-    nbActions = 20                          # nombre d'actions prises par un individu
-    tempsSimualtion = 2000                   # Nombre de tics pour la simulation
+    map = map3                               # choisir la map
+    nbActions = 100                          # nombre d'actions prises par un individu
+    tempsSimualtion = 10000                   # Nombre de tics pour la simulation
     echantillonnage = 10                     # Nb de tic du moteur de jeu par secondes de simulation
-    initX = 1500                         # position initiale X
-    initY = 1800                            # position initiale Y
-    tauxCross = 0.2                          # Taux de croisement
-    tauxMut = 0.8                       # Taux de mutation
+    initX = 5500                               # position initiale X
+    initY = 2500                            # position initiale Y
+    tauxCross = 0.3                          # Taux de croisement
+    tauxMut = 0.5                           # Taux de mutation
 
     # PROGRAMME INITIALISATION
     if initX>map.points[0][map.lz[1]] : initOrient = -1
